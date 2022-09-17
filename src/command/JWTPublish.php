@@ -14,7 +14,7 @@ use think\console\Command;
 use think\console\Input;
 use think\console\Output;
 
-class Publish extends Command
+class JWTPublish extends Command
 {
     /**
      * 配置指令

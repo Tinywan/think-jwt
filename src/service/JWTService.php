@@ -19,6 +19,6 @@ class JWTService extends Service
      */
     public function boot()
     {
-        $this->commands(['tinywan:jwt' => \tinywan\command\Publish::class]);
+        $this->commands(['tinywan:jwt' => \tinywan\command\JWTPublish::class]);
     }
 }
