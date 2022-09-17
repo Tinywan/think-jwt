@@ -1,0 +1,29 @@
+{
+  "name": "tinywan/think-jwt",
+  "description": "JSON Web Token (JWT) for Think plugin",
+  "type": "library",
+  "license": "MIT",
+  "require": {
+    "php": "^7.1||^8.0",
+    "ext-json": "*",
+    "firebase/php-jwt": "^6.1",
+    "topthink/framework": "^6.0.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "tinywan\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "tinywan\\tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "think": {
+      "services": [
+        "tinywan\\service\\JwtService"
+      ]
+    }
+  }
+}
