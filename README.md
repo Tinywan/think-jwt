@@ -31,6 +31,13 @@ JWT的声明一般被用来在身份提供者和服务提供者间传递被认�
 composer require tinywan/think-jwt
 ```
 
+## 发布配置
+
+```phpregexp
+php think tinywan:jwt
+```
+这将自动生成 `config/jwt.php` 配置文件。
+
 ## 使用
 
 ### 生成令牌

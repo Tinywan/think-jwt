@@ -21,7 +21,7 @@ class Publish extends Command
      */
     protected function configure()
     {
-        $this->setName('tinywan:jwt')->setDescription('Publish Exception Handler');
+        $this->setName('tinywan:jwt')->setDescription('Publish JWT Config');
     }
 
     /**
@@ -31,7 +31,7 @@ class Publish extends Command
      * @return null|int
      * @see setCode()
      */
-    protected function execute(Input $input, Output $output)
+    protected function execute(Input $input, Output $output): ?int
     {
         if (!file_exists(config_path().'jwt.php')) {
             copy(__DIR__.'/../config/jwt.php', config_path().'jwt.php');
