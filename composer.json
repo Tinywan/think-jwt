@@ -6,7 +6,6 @@
   "require": {
     "php": "^7.1||^8.0",
     "ext-json": "*",
-    "topthink/framework": "^6.0.0",
     "firebase/php-jwt": "^6.1"
   },
   "autoload": {
@@ -25,5 +24,8 @@
         "tinywan\\service\\JWTService"
       ]
     }
+  },
+  "require-dev": {
+    "topthink/framework": "^6.0"
   }
 }
