@@ -31,7 +31,7 @@ class Publish extends Command
      * @return null|int
      * @see setCode()
      */
-    protected function execute(Input $input, Output $output): ?int
+    protected function execute(Input $input, Output $output)
     {
         if (!file_exists(config_path().'jwt.php')) {
             copy(__DIR__.'/../config/jwt.php', config_path().'jwt.php');
