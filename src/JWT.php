@@ -81,9 +81,7 @@ class JWT
 
     /**
      * @desc: 刷新令牌
-     *
      * @return array|string[]
-     *
      * @throws JWTTokenException
      */
     public static function refreshToken(): array
@@ -103,15 +101,9 @@ class JWT
         } catch (JwtCacheTokenException | \Exception $exception) {
             throw new JWTTokenException($exception->getMessage());
         }
-        $payload = self::generatePayload($config, $extend['extend']);
         $secretKey = self::getPrivateKey($config);
         $extend['exp'] = time() + $config['access_exp'];
         $newToken['access_token'] = self::makeToken($extend, $secretKey, $config['algorithms']);
-        if (!isset($config['refresh_disable']) || (isset($config['refresh_disable']) && $config['refresh_disable'] === false)) {
-            $refreshSecretKey = self::getPrivateKey($config, self::REFRESH_TOKEN);
-            $payload['exp'] = time() + $config['refresh_exp'];
-            $newToken['refresh_token'] = self::makeToken($payload['refreshPayload'], $refreshSecretKey, $config['algorithms']);
-        }
         return $newToken;
     }
 
