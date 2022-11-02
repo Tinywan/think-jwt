@@ -91,15 +91,15 @@ class JWT
         try {
             $extend = self::verifyToken($token, self::REFRESH_TOKEN);
         } catch (SignatureInvalidException $signatureInvalidException) {
-            throw new JWTTokenException('刷新令牌无效');
+            throw new JWTRefreshTokenExpiredException('刷新令牌无效');
         } catch (BeforeValidException $beforeValidException) {
-            throw new JWTTokenException('刷新令牌尚未生效');
+            throw new JWTRefreshTokenExpiredException('刷新令牌尚未生效');
         } catch (ExpiredException $expiredException) {
             throw new JWTRefreshTokenExpiredException('刷新令牌会话已过期，请再次登录！');
         } catch (UnexpectedValueException $unexpectedValueException) {
-            throw new JWTTokenException('刷新令牌获取的扩展字段不存在');
+            throw new JWTRefreshTokenExpiredException('刷新令牌获取的扩展字段不存在');
         } catch (JwtCacheTokenException | \Exception $exception) {
-            throw new JWTTokenException($exception->getMessage());
+            throw new JWTRefreshTokenExpiredException($exception->getMessage());
         }
         $secretKey = self::getPrivateKey($config);
         $extend['exp'] = time() + $config['access_exp'];
