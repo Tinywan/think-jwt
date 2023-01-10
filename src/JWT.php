@@ -190,11 +190,11 @@ class JWT
     {
         $authorization = request()->header('authorization');
         if (!$authorization || 'undefined' == $authorization) {
-            throw new JWTTokenException('请求未携带authorization信息');
+            throw new JWTTokenException('身份验证会话已过期，请重新登录！');
         }
 
         if (self::REFRESH_TOKEN != substr_count($authorization, '.')) {
-            throw new JWTTokenException('非法的authorization信息');
+            throw new JWTTokenException('身份验证会话已过期，请重新登录！');
         }
 
         if (2 != count(explode(' ', $authorization))) {
