@@ -44,6 +44,28 @@ class JWT
     }
 
     /**
+     * @desc: 获取当前获取角色code
+     * @throws JwtTokenException
+     * @return mixed
+     * @author Tinywan(ShaoBo Wan)
+     */
+    public static function getCurrentRoleCode()
+    {
+        return self::getExtendVal('role') ?? 0;
+    }
+
+    /**
+     * @desc: 获取当前获取角色id
+     * @throws JwtTokenException
+     * @return mixed
+     * @author Tinywan(ShaoBo Wan)
+     */
+    public static function getCurrentRoleId()
+    {
+        return self::getExtendVal('role_id') ?? 0;
+    }
+
+    /**
      * @desc: 获取当前用户信息
      * @return array
      * @author Tinywan(ShaoBo Wan)
