@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace tinywan;
 
 use tinywan\exception\JwtCacheTokenException;
+use tinywan\service\RedisService;
 
 class RedisHandler
 {
@@ -21,12 +22,12 @@ class RedisHandler
      */
     public static function generateToken(array $args): void
     {
-        $cacheKey = $args['cache_token_pre'].$args['id'];
-        $key = Redis::keys($cacheKey.':*');
+        $cacheKey = $args['cache_token_pre'] . $args['id'];
+        $key = RedisService::keys($cacheKey . ':*');
         if (!empty($key)) {
-            Redis::del(current($key));
+            RedisService::del(current($key));
         }
-        Redis::setex($cacheKey.':'.$args['ip'], $args['cache_token_ttl'], $args['extend']);
+        RedisService::setex($cacheKey . ':' . $args['ip'], $args['cache_token_ttl'], $args['extend']);
     }
 
     /**
@@ -39,8 +40,8 @@ class RedisHandler
      */
     public static function verifyToken(string $pre, string $uid, string $ip): bool
     {
-        $cacheKey = $pre.$uid.':'.$ip;
-        if (!Redis::exists($cacheKey)) {
+        $cacheKey = $pre . $uid . ':' . $ip;
+        if (!RedisService::exists($cacheKey)) {
             throw new JwtCacheTokenException('该账号已在其他设备登录，强制下线');
         }
         return true;
