@@ -269,11 +269,11 @@ class JWT
     }
 
     /**
-     * @desc: 获取加密载体.
-     *
-     * @param array $config 配置文件
-     * @param array $extend 扩展加密字段
+     * @desc: 获取加密载体
+     * @param array $config
+     * @param array $extend
      * @return array
+     * @author Tinywan(ShaoBo Wan)
      */
     private static function generatePayload(array $config, array $extend): array
     {
@@ -287,10 +287,12 @@ class JWT
             ]);
         }
         $basePayload = [
-            'iss' => $config['iss'],
-            'iat' => time(),
-            'exp' => time() + $config['access_exp'],
-            'extend' => $extend
+            'iss' => $config['iss'], // 签发者
+            'aud' => $config['iss'], // 接收该JWT的一方
+            'iat' => time(), // 签发时间
+            'nbf' => time() + $config['nbf'] ?? 0, // 某个时间点后才能访问
+            'exp' => time() + $config['access_exp'], // 过期时间
+            'extend' => $extend // 自定义扩展信息
         ];
         $resPayLoad['accessPayload'] = $basePayload;
         $basePayload['exp'] = time() + $config['refresh_exp'];
