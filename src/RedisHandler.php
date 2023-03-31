@@ -46,4 +46,28 @@ class RedisHandler
         }
         return true;
     }
+
+    /**
+     * @desc: SetRefreshToken stores a refresh token with an expiry time
+     * @param string $tokenId
+     * @param string $refreshToken
+     * @param int $refreshTokenExpire
+     * @return bool
+     * @author Tinywan(ShaoBo Wan)
+     */
+    public static function setRefreshToken(string $tokenId, string $refreshToken, int $refreshTokenExpire): bool
+    {
+        return RedisService::set('JWT:REFRESH_TOKEN:' . $tokenId, $refreshToken, $refreshTokenExpire);
+    }
+
+    /**
+     * @desc: DeleteRefreshToken used to delete old  refresh tokens
+     * @param string $tokenId
+     * @return int
+     * @author Tinywan(ShaoBo Wan)
+     */
+    public static function deleteRefreshToken(string $tokenId): int
+    {
+        return RedisService::del('JWT:REFRESH_TOKEN:' . $tokenId);
+    }
 }

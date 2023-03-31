@@ -27,6 +27,9 @@ return [
     // refresh 令牌是否禁用，默认不禁用 false
     'refresh_disable' => false,
 
+    // refresh 存储
+    'refresh_is_store' => false,
+
     // 令牌签发者
     'iss' => 'think.tinywan.cn',
 

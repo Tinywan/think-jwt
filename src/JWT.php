@@ -153,6 +153,9 @@ class JWT
         if (!isset($config['refresh_disable']) || (isset($config['refresh_disable']) && $config['refresh_disable'] === false)) {
             $refreshSecretKey = self::getPrivateKey($config, self::REFRESH_TOKEN);
             $token['refresh_token'] = self::makeToken($payload['refreshPayload'], $refreshSecretKey, $config['algorithms']);
+            if (isset($config['refresh_is_store']) && $config['refresh_is_store'] === true) {
+                RedisHandler::setRefreshToken((string) $extend['id'], $token['refresh_token'], $config['refresh_exp']);
+            }
         }
         return $token;
     }
@@ -361,5 +364,15 @@ class JWT
             throw new JWTConfigException('jwt配置文件不存在');
         }
         return $config;
+    }
+
+    /**
+     * @desc: 删除刷新令牌
+     * @param string $tokenId
+     * @return int
+     */
+    public static function deleteRefreshToken(string  $tokenId): int
+    {
+        return RedisHandler::deleteRefreshToken($tokenId);
     }
 }
