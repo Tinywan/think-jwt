@@ -15,6 +15,7 @@ use Firebase\JWT\Key;
 use Firebase\JWT\SignatureInvalidException;
 use tinywan\exception\JWTCacheTokenException;
 use tinywan\exception\JWTRefreshTokenExpiredException;
+use tinywan\exception\JWTStoreRefreshTokenExpiredException;
 use tinywan\exception\JWTTokenException;
 use tinywan\exception\JWTConfigException;
 use tinywan\exception\JWTTokenExpiredException;
@@ -108,10 +109,13 @@ class JWT
      */
     public static function refreshToken(): array
     {
-        $token = self::getTokenFromHeaders();
-        $config = self::_getConfig();
+        $refreshToken = self::getTokenFromHeaders();
         try {
-            $extend = self::verifyToken($token, self::REFRESH_TOKEN);
+            $extend = self::verifyToken($refreshToken, self::REFRESH_TOKEN);
+            $config = self::_getConfig();
+            if (isset($config['refresh_is_store']) && $config['refresh_is_store'] === true) {
+                self::checkStoreRefreshToken((string) $extend['extend']['id'], $refreshToken);
+            }
         } catch (SignatureInvalidException $signatureInvalidException) {
             throw new JWTRefreshTokenExpiredException('刷新令牌无效');
         } catch (BeforeValidException $beforeValidException) {
@@ -120,13 +124,14 @@ class JWT
             throw new JWTRefreshTokenExpiredException('刷新令牌会话已过期，请再次登录！');
         } catch (UnexpectedValueException $unexpectedValueException) {
             throw new JWTRefreshTokenExpiredException('刷新令牌获取的扩展字段不存在');
+        } catch (JWTStoreRefreshTokenExpiredException $expiredException) {
+            throw new JWTRefreshTokenExpiredException('存储刷新令牌会话已过期，请再次登录！');
         } catch (JwtCacheTokenException | \Exception $exception) {
             throw new JWTRefreshTokenExpiredException($exception->getMessage());
         }
         $secretKey = self::getPrivateKey($config);
         $extend['exp'] = time() + $config['access_exp'];
-        $newToken['access_token'] = self::makeToken($extend, $secretKey, $config['algorithms']);
-        return $newToken;
+        return ['access_token' => self::makeToken($extend, $secretKey, $config['algorithms'])];
     }
 
     /**
@@ -207,8 +212,8 @@ class JWT
     }
 
     /**
-     * @desc: 获取Header头部authorization令牌
-     *
+     * @desc:
+     * @return string
      * @throws JwtTokenException
      */
     private static function getTokenFromHeaders(): string
@@ -293,7 +298,7 @@ class JWT
             'iss' => $config['iss'], // 签发者
             'aud' => $config['iss'], // 接收该JWT的一方
             'iat' => time(), // 签发时间
-            'nbf' => time() + $config['nbf'] ?? 0, // 某个时间点后才能访问
+            'nbf' => time() + ($config['nbf'] ?? 0), // 某个时间点后才能访问
             'exp' => time() + $config['access_exp'], // 过期时间
             'extend' => $extend // 自定义扩展信息
         ];
@@ -367,12 +372,31 @@ class JWT
     }
 
     /**
+     * @desc 存储校验刷新令牌
+     * @param string $tokenId
+     * @param string $refreshToken
+     * @return void
+     */
+    private static function checkStoreRefreshToken(string $tokenId, string $refreshToken): void
+    {
+        $storeRefreshToken = RedisHandler::getRefreshToken($tokenId);
+        if (false === $storeRefreshToken) {
+            throw new JWTStoreRefreshTokenExpiredException('存储刷新令牌已被删除');
+        }
+
+        if ($storeRefreshToken != $refreshToken) {
+            throw new JWTStoreRefreshTokenExpiredException('存储刷新令牌和请求刷新令牌不一致');
+        }
+    }
+
+    /**
      * @desc: 删除刷新令牌
      * @param string $tokenId
      * @return int
      */
-    public static function deleteRefreshToken(string  $tokenId): int
+    public static function deleteRefreshToken(string $tokenId): int
     {
         return RedisHandler::deleteRefreshToken($tokenId);
     }
+
 }

@@ -48,6 +48,17 @@ class RedisHandler
     }
 
     /**
+     * @desc: getRefreshToken stores a refresh token
+     * @param string $tokenId
+     * @return bool|string
+     * @author Tinywan(ShaoBo Wan)
+     */
+    public static function getRefreshToken(string $tokenId)
+    {
+        return RedisService::get('JWT:REFRESH_TOKEN:' . $tokenId);
+    }
+
+    /**
      * @desc: SetRefreshToken stores a refresh token with an expiry time
      * @param string $tokenId
      * @param string $refreshToken
