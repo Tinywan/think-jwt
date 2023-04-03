@@ -372,15 +372,10 @@ class JWT
      */
     private static function _getConfig(): array
     {
-        $key = 'jwt_config_file';
-        if (Cache::has($key)) {
-            return (array) Cache::get($key);
-        }
         $config = config('jwt');
         if (empty($config)) {
             throw new JWTConfigException('jwt.php 配置文件不存在');
         }
-        Cache::set($key, $config);
         return $config;
     }
 
