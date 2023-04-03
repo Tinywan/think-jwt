@@ -13,6 +13,7 @@ use Firebase\JWT\ExpiredException;
 use Firebase\JWT\JWT as BaseJWT;
 use Firebase\JWT\Key;
 use Firebase\JWT\SignatureInvalidException;
+use think\facade\Cache;
 use tinywan\exception\JWTCacheTokenException;
 use tinywan\exception\JWTRefreshTokenExpiredException;
 use tinywan\exception\JWTStoreRefreshTokenExpiredException;
@@ -179,7 +180,7 @@ class JWT
             $token = $token ?? self::getTokenFromHeaders();
             $config = self::_getConfig();
             $extend = self::verifyToken($config, $token, $tokenType);
-            if (isset($config['access_force_exp'])) {
+            if (isset($config['access_is_force']) && true === $config['access_is_force']) {
                 self::isForceExpire($extend['iat'], $extend['exp'], $config['access_force_exp']);
             }
             return $extend;
@@ -272,7 +273,6 @@ class JWT
 
     /**
      * @desc: 生成令牌.
-     *
      * @param array  $payload    载荷信息
      * @param string $secretKey  签名key
      * @param string $algorithms 算法
@@ -321,7 +321,7 @@ class JWT
      * @param string $algorithm 算法
      * @param int $tokenType 类型
      * @return string
-     * @throws JwtConfigException
+     * @author Tinywan(ShaoBo Wan)
      */
     private static function getPublicKey(string $algorithm, int $tokenType = self::ACCESS_TOKEN): string
     {
@@ -346,6 +346,7 @@ class JWT
      * @param array $config 配置文件
      * @param int $tokenType 令牌类型
      * @return string
+     * @author Tinywan(ShaoBo Wan)
      */
     private static function getPrivateKey(array $config, int $tokenType = self::ACCESS_TOKEN): string
     {
@@ -371,18 +372,23 @@ class JWT
      */
     private static function _getConfig(): array
     {
+        $key = 'jwt_config_file';
+        if (Cache::has($key)) {
+            return (array) Cache::get($key);
+        }
         $config = config('jwt');
         if (empty($config)) {
-            throw new JWTConfigException('jwt配置文件不存在');
+            throw new JWTConfigException('jwt.php 配置文件不存在');
         }
+        Cache::set($key, $config);
         return $config;
     }
 
     /**
-     * @desc 存储校验刷新令牌
+     * @desc: 存储校验刷新令牌
      * @param string $tokenId
      * @param string $refreshToken
-     * @return void
+     * @author Tinywan(ShaoBo Wan)
      */
     private static function checkStoreRefreshToken(string $tokenId, string $refreshToken): void
     {
@@ -400,6 +406,7 @@ class JWT
      * @desc: 删除刷新令牌
      * @param string $tokenId
      * @return int
+     * @author Tinywan(ShaoBo Wan)
      */
     public static function deleteRefreshToken(string $tokenId): int
     {

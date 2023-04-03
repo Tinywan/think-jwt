@@ -18,6 +18,9 @@ return [
     // access令牌过期时间，单位：秒。默认 2 小时
     'access_exp' => 7200,
 
+    // 是否开启访问令牌强制提前过期
+    'access_is_force' => false,
+
     // access令牌强制过期时间，默认和access令牌过期时间一致，如果想让已经发放的令牌提前过期，可以缩短该过期时间
     // 单位：秒。默认 2 小时
     'access_force_exp' => 7200,
@@ -35,7 +38,7 @@ return [
     // refresh 令牌是否禁用，默认不禁用 false
     'refresh_disable' => false,
 
-    // refresh 存储
+    // refresh 存储，该存储依赖于Redis
     'refresh_is_store' => false,
 
     // 令牌签发者
