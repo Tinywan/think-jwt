@@ -111,8 +111,8 @@ class JWT
     {
         $refreshToken = self::getTokenFromHeaders();
         try {
-            $extend = self::verifyToken($refreshToken, self::REFRESH_TOKEN);
             $config = self::_getConfig();
+            $extend = self::verifyToken($config, $refreshToken, self::REFRESH_TOKEN);
             if (isset($config['refresh_is_store']) && $config['refresh_is_store'] === true) {
                 self::checkStoreRefreshToken((string) $extend['extend']['id'], $refreshToken);
             }
@@ -175,15 +175,22 @@ class JWT
      */
     public static function verify(int $tokenType = self::ACCESS_TOKEN, string $token = null): array
     {
-        $token = $token ?? self::getTokenFromHeaders();
         try {
-            return self::verifyToken($token, $tokenType);
+            $token = $token ?? self::getTokenFromHeaders();
+            $config = self::_getConfig();
+            $extend = self::verifyToken($config, $token, $tokenType);
+            if (isset($config['access_force_exp'])) {
+                self::isForceExpire($extend['iat'], $extend['exp'], $config['access_force_exp']);
+            }
+            return $extend;
         } catch (SignatureInvalidException $signatureInvalidException) {
             throw new JWTTokenException('身份验证令牌无效');
         } catch (BeforeValidException $beforeValidException) {
             throw new JWTTokenException('身份验证令牌尚未生效');
         } catch (ExpiredException $expiredException) {
             throw new JWTTokenExpiredException('身份验证会话已过期，请重新登录！');
+        } catch (JWTRefreshTokenExpiredException $forceExpiredException) {
+            throw new JWTRefreshTokenExpiredException('身份验证会话已过期，请重新登录！(暴力)');
         } catch (UnexpectedValueException $unexpectedValueException) {
             throw new JWTTokenException('获取的扩展字段不存在');
         } catch (JWTCacheTokenException | \Exception $exception) {
@@ -244,14 +251,14 @@ class JWT
 
     /**
      * @desc: 校验令牌
+     * @param array $config
      * @param string $token
      * @param int $tokenType
      * @return array
      * @author Tinywan(ShaoBo Wan)
      */
-    private static function verifyToken(string $token, int $tokenType): array
+    private static function verifyToken(array $config, string $token, int $tokenType): array
     {
-        $config = self::_getConfig();
         $publicKey = self::ACCESS_TOKEN == $tokenType ? self::getPublicKey($config['algorithms']) : self::getPublicKey($config['algorithms'], self::REFRESH_TOKEN);
         BaseJWT::$leeway = $config['leeway'];
 
@@ -397,6 +404,20 @@ class JWT
     public static function deleteRefreshToken(string $tokenId): int
     {
         return RedisHandler::deleteRefreshToken($tokenId);
+    }
+
+    /**
+     * @desc: 是否强制过期
+     * @param int $iat 签发时间
+     * @param int $exp 过期时间
+     * @param int $forceExpire 强制过期时间
+     * @author Tinywan(ShaoBo Wan)
+     */
+    private static function isForceExpire(int $iat, int $exp, int $forceExpire)
+    {
+        if (($iat + $forceExpire) < $exp) {
+            throw new JWTRefreshTokenExpiredException('暴力提前过期');
+        }
     }
 
 }

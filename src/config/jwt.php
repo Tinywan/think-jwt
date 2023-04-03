@@ -18,11 +18,19 @@ return [
     // access令牌过期时间，单位：秒。默认 2 小时
     'access_exp' => 7200,
 
+    // access令牌强制过期时间，默认和access令牌过期时间一致，如果想让已经发放的令牌提前过期，可以缩短该过期时间
+    // 单位：秒。默认 2 小时
+    'access_force_exp' => 7200,
+
     // refresh令牌秘钥
     'refresh_secret_key' => '2022KTxigxc9o50c',
 
     // refresh令牌过期时间，单位：秒。默认 7 天
     'refresh_exp' => 604800,
+
+    // refresh令牌强制过期时间，默认和refresh令牌过期时间一致，如果想让已经发放的令牌提前过期，可以缩短该过期时间
+    // 单位：秒。默认 2 小时
+    'refresh_force_exp' => 604800,
 
     // refresh 令牌是否禁用，默认不禁用 false
     'refresh_disable' => false,
