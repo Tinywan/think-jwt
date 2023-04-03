@@ -13,7 +13,6 @@ use Firebase\JWT\ExpiredException;
 use Firebase\JWT\JWT as BaseJWT;
 use Firebase\JWT\Key;
 use Firebase\JWT\SignatureInvalidException;
-use think\facade\Cache;
 use tinywan\exception\JWTCacheTokenException;
 use tinywan\exception\JWTRefreshTokenExpiredException;
 use tinywan\exception\JWTStoreRefreshTokenExpiredException;
