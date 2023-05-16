@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace tinywan;
 
-use tinywan\exception\JwtCacheTokenException;
+use tinywan\exception\JWTCacheTokenException;
 use tinywan\service\RedisService;
 
 class RedisHandler
@@ -42,7 +42,7 @@ class RedisHandler
     {
         $cacheKey = $pre . $uid . ':' . $ip;
         if (!RedisService::exists($cacheKey)) {
-            throw new JwtCacheTokenException('该账号已在其他设备登录，强制下线');
+            throw new JWTCacheTokenException('该账号已在其他设备登录，强制下线');
         }
         return true;
     }
