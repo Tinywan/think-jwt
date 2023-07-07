@@ -373,7 +373,7 @@ class JWT
     {
         $config = config('jwt');
         if (empty($config)) {
-            throw new JWTConfigException('config.php 配置文件不存在');
+            throw new JWTConfigException('jwt.php 配置文件不存在');
         }
         return $config;
     }
