@@ -4,29 +4,27 @@
   "type": "library",
   "license": "MIT",
   "require": {
-    "php": "^7.1||^8.0",
-    "ext-json": "*",
-    "firebase/php-jwt": "^6.1",
-    "ext-redis": "*"
-  },
+	"php": "^7.1||^8.0",
+	"ext-json": "*",
+	"firebase/php-jwt": "^6.1"},
   "autoload": {
-    "psr-4": {
-      "tinywan\\": "src"
-    }
+	"psr-4": {
+	  "tinywan\\": "src"
+	}
   },
   "autoload-dev": {
-    "psr-4": {
-      "tinywan\\tests\\": "tests/"
-    }
+	"psr-4": {
+	  "tinywan\\tests\\": "tests/"
+	}
   },
   "extra": {
-    "think": {
-      "services": [
-        "tinywan\\service\\JWTService"
-      ]
-    }
+	"think": {
+	  "config": {
+		"jwt": "src/config.php"
+	  }
+	}
   },
   "require-dev": {
-    "topthink/framework": "^6.0"
+	"topthink/framework": "^6.0"
   }
 }
