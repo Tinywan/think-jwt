@@ -5,7 +5,6 @@
   "license": "MIT",
   "require": {
     "php": "^7.1||^8.0",
-    "ext-json": "*",
     "firebase/php-jwt": "^6.8"
   },
   "autoload": {
