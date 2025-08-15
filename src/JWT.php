@@ -173,7 +173,7 @@ class JWT
      * @throws JWTTokenException
      * @author Tinywan(ShaoBo Wan)
      */
-    public static function verify(int $tokenType = self::ACCESS_TOKEN, string $token = null): array
+    public static function verify(int $tokenType = self::ACCESS_TOKEN, string|null $token = null): array
     {
         try {
             $token = $token ?? self::getTokenFromHeaders();
